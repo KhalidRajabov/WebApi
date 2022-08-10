@@ -1,8 +1,7 @@
-﻿namespace WebApi.Models
+﻿namespace WebApi.DTO.Product_DTOs
 {
-    public class Product:BaseEntity
+    public class ProductCreateDto
     {
-        
         public string Name { get; set; }
         public double Price { get; set; }
         public bool IsActive { get; set; }
