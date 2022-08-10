@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using WebApi.Configuration;
 using WebApi.Models;
 
 namespace WebApi.Data
@@ -11,5 +12,11 @@ namespace WebApi.Data
         }   
 
         public DbSet<Product> Products{ get; set; }
+
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            modelBuilder.ApplyConfiguration(new  ProductConfiguration());
+        }
     }
 }

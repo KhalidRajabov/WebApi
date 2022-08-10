@@ -35,18 +35,25 @@ namespace WebApi.Controllers
         //[Route("All")]
         public IActionResult GetAll()
         {
-            List<Product> products = _context.Products.Where(p => !p.IsDeleted&&p.IsActive).ToList();
+            var query = _context.Products.Where(p => p.IsActive);
+            
             ProductListDto ProductList = new ProductListDto();
-            foreach (var item in products)
+            /*foreach (var item in products)
             {
                 ProductReturnDto productReturnDto = new ProductReturnDto();
                 productReturnDto.Name = item.Name;
                 productReturnDto.Price = item.Price;
                 productReturnDto.IsActive = item.IsActive;
                 ProductList.Items.Add(productReturnDto);
-                //26ci deqie
-            }
-            ProductList.Total = products.Count;
+                
+            }*/
+            ProductList.Items = query.Select(p=> new ProductReturnDto
+            {
+                Name = p.Name,
+                Price = p.Price,
+                IsActive = p.IsActive
+            }).ToList();
+            ProductList.Total = query.Count();
 
             return StatusCode(200, ProductList);
         }
