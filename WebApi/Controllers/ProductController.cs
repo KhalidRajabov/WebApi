@@ -66,6 +66,7 @@ namespace WebApi.Controllers
                 Name = productCreateDto.Name,
                 Price = productCreateDto.Price,
                 IsActive = productCreateDto.IsActive,
+                CategoryId = productCreateDto.CategoryId
             };
             await _context.Products.AddAsync(product);
             await _context.SaveChangesAsync();

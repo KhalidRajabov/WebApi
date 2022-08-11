@@ -11,6 +11,7 @@ namespace WebApi.Configuration
         {
             builder.Property(p => p.Name).IsRequired(true).HasMaxLength(30);
             builder.Property(p => p.Price).HasDefaultValue(50).HasColumnType("decimal(18,2)");
+            builder.Property(p => p.DiscountPrice).HasDefaultValue(50).HasColumnType("decimal(18,2)");
             builder.Property(p => p.IsDeleted).HasDefaultValue(false);
             builder.Property(p => p.IsActive).HasDefaultValue(false);
             builder.Property(p => p.CreatedTime).HasDefaultValue(DateTime.Now);
