@@ -1,5 +1,7 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -14,21 +16,24 @@ namespace WebApi.Controllers
     public class ProductController : ControllerBase
     {
         private readonly AppDbContext _context;
-        public ProductController(AppDbContext context)
+        private readonly IMapper _mapper;
+        public ProductController(AppDbContext context, IMapper mapper)
         {
             _context = context;
+            _mapper = mapper;
         }
 
         [HttpGet]
         [Route("{Id}")]
         public IActionResult GetOne(int id)
         {
-            Product product= _context.Products.Where(p=>p.IsActive).FirstOrDefault(p => p.Id == id);
+            Product product= _context.Products.Where(p=>p.IsActive).Include(c=>c.Category).FirstOrDefault(p => p.Id == id);
             if (product== null) return NotFound();
-            ProductReturnDto productReturnDto = new ProductReturnDto();
+            /*ProductReturnDto productReturnDto = new ProductReturnDto();
             productReturnDto.Name = product.Name;
             productReturnDto.Price= product.Price;
-            productReturnDto.IsActive = product.IsActive;
+            productReturnDto.IsActive = product.IsActive;*/
+            ProductReturnDto productReturnDto = _mapper.Map<ProductReturnDto>(product);
             return Ok(productReturnDto);
         }
         [HttpGet]

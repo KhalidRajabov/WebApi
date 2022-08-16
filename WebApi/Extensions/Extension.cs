@@ -27,5 +27,10 @@ namespace WebApi.Extensions
             };
             return filename;
         }
+
+        public static int CalculateDate(this DateTime date)
+        {
+            return DateTime.Now.Day - date.Month;
+        }
     }
 }

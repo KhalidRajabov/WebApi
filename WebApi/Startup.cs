@@ -13,6 +13,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using WebApi.Data;
 using WebApi.DTO.Product_DTOs;
+using WebApi.Mapping;
 
 namespace WebApi
 {
@@ -32,6 +33,10 @@ namespace WebApi
             services.AddDbContext<AppDbContext>(opt =>
             {
                 opt.UseSqlServer(Configuration.GetConnectionString("DefaultConnection"));
+            });
+            services.AddAutoMapper(opt =>
+            {
+                opt.AddProfile(new MapperProfile());
             });
         }
 

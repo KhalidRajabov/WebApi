@@ -1,6 +1,9 @@
-﻿using Microsoft.AspNetCore.Hosting;
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
@@ -17,38 +20,37 @@ namespace WebApi.Controllers
     {
         private readonly AppDbContext _context;
         private readonly IWebHostEnvironment _env;
-        public CategoryController(AppDbContext context, IWebHostEnvironment env)
+        private readonly IMapper _mapper;
+        public CategoryController(AppDbContext context, IWebHostEnvironment env, IMapper mapper)
         {
             _context = context;
             _env = env;
+            _mapper = mapper;
         }
 
         [HttpGet]
         [Route("{Id}")]
         public IActionResult GetOne(int id)
         {
-            Category category = _context.Categories.FirstOrDefault(p => p.Id == id&&!p.IsDeleted);
-            if (category  == null) return NotFound();
+            Category category = _context.Categories.Include(p=>p.Products).FirstOrDefault(p => p.Id == id&&!p.IsDeleted);
+            /*if (category  == null) return NotFound();
             CategoryReturnDto categoryReturnDto = new CategoryReturnDto();
             categoryReturnDto.Name = category.Name;
-            categoryReturnDto.ImageUrl = "http://localhost:3317/img"+ category.ImageUrl;
+            categoryReturnDto.ImageUrl = "http://localhost:3317/img"+ category.ImageUrl;*/
+            CategoryReturnDto categoryReturnDto = _mapper.Map<CategoryReturnDto>(category);
             return Ok(categoryReturnDto);
         }
 
         [HttpGet]
         //[Route("All")]
-        public IActionResult GetAll()
+        public IActionResult GetAll() 
         {
-            var query = _context.Categories.Where(p => !p.IsDeleted);
-
-            CategoryListDto CategoryList = new CategoryListDto();
-            CategoryList.Items = query.Select(c => new CategoryReturnDto
-            {
-                Name = c.Name,
-                ImageUrl = "http://localhost:3317/img/" + c.ImageUrl
-            }).ToList();
-            CategoryList.Total = query.Count();
-            return StatusCode(200, CategoryList);
+            List<Category> categories = _context.Categories.Where(p => !p.IsDeleted).ToList();
+             
+            CategoryListDto categoryListDto = _mapper.Map<CategoryListDto>(categories);
+            
+            categoryListDto.Total = categories.Count();
+            return StatusCode(200, categoryListDto);
         }
 
         [HttpPost]
