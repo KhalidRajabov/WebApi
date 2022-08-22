@@ -17,6 +17,10 @@ namespace WebApi.Controllers
     {
         private readonly AppDbContext _context;
         private readonly IMapper _mapper;
+        /*public ProductController()
+        {
+
+        }*/
         public ProductController(AppDbContext context, IMapper mapper)
         {
             _context = context;
@@ -29,10 +33,6 @@ namespace WebApi.Controllers
         {
             Product product= _context.Products.Where(p=>p.IsActive).Include(c=>c.Category).FirstOrDefault(p => p.Id == id);
             if (product== null) return NotFound();
-            /*ProductReturnDto productReturnDto = new ProductReturnDto();
-            productReturnDto.Name = product.Name;
-            productReturnDto.Price= product.Price;
-            productReturnDto.IsActive = product.IsActive;*/
             ProductReturnDto productReturnDto = _mapper.Map<ProductReturnDto>(product);
             return Ok(productReturnDto);
         }
@@ -40,26 +40,31 @@ namespace WebApi.Controllers
         //[Route("All")]
         public IActionResult GetAll()
         {
-            var query = _context.Products.Where(p => p.IsActive);
-            
-            ProductListDto ProductList = new ProductListDto();
-            /*foreach (var item in products)
-            {
-                ProductReturnDto productReturnDto = new ProductReturnDto();
-                productReturnDto.Name = item.Name;
-                productReturnDto.Price = item.Price;
-                productReturnDto.IsActive = item.IsActive;
-                ProductList.Items.Add(productReturnDto);
-                
-            }*/
-            ProductList.Items = query.Select(p=> new ProductReturnDto
-            {
-                Name = p.Name,
-                Price = p.Price,
-                IsActive = p.IsActive
-            }).ToList();
-            ProductList.Total = query.Count();
 
+            #region manual mapping and select mapping
+            /*foreach (var item in products)
+       {
+           ProductReturnDto productReturnDto = new ProductReturnDto();
+           productReturnDto.Name = item.Name;
+           productReturnDto.Price = item.Price;
+           productReturnDto.IsActive = item.IsActive;
+           ProductList.Items.Add(productReturnDto);
+
+       }*/
+            /*     ProductList.Items = query.Select(p=> new ProductReturnDto
+                 {
+                     Name = p.Name,
+                     Price = p.Price,
+                     IsActive = p.IsActive
+                 }).ToList();
+                 ProductList.Total = query.Count();*/
+            #endregion
+
+
+            var query = _context.Products.Where(p => p.IsActive).Include(c=>c.Category).AsQueryable();
+
+            List<ProductReturnDto> productReturnDtos = _mapper.Map<List<ProductReturnDto>>(query.ToList());
+            ProductListDto ProductList = _mapper.Map<ProductListDto>(productReturnDtos);
             return StatusCode(200, ProductList);
         }
 
@@ -96,5 +101,11 @@ namespace WebApi.Controllers
             await _context.SaveChangesAsync();
             return StatusCode(200);
         }
+
+
+ /*       public int Plus(int num1, int num2)
+        {
+            return num1 + num2;
+        }*/
     }
 }

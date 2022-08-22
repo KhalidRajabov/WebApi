@@ -45,11 +45,11 @@ namespace WebApi.Controllers
         //[Route("All")]
         public IActionResult GetAll() 
         {
-            List<Category> categories = _context.Categories.Where(p => !p.IsDeleted).ToList();
-             
-            CategoryListDto categoryListDto = _mapper.Map<CategoryListDto>(categories);
-            
-            categoryListDto.Total = categories.Count();
+            var query = _context.Categories.Where(c=>!c.IsDeleted).AsQueryable();
+
+            List<CategoryReturnDto> categoryReturnDtos = _mapper.Map < List<CategoryReturnDto>>(query.ToList());
+
+            CategoryListDto categoryListDto = _mapper.Map < CategoryListDto > (categoryReturnDtos);
             return StatusCode(200, categoryListDto);
         }
 
