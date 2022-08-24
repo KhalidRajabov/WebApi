@@ -90,7 +90,7 @@ namespace WebApi.Controllers
             if (!User.Identity.IsAuthenticated) return StatusCode(401, "Please login");
             
             AppUser user = await _usermanager.FindByNameAsync(User.Identity.Name);
-            return Ok(new { name = user.UserName });
+            return Ok(new { name = user.UserName, text = "It works" });
         }
     }
 }

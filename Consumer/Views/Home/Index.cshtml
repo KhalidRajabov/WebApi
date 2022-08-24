@@ -3,28 +3,32 @@
 @{
     ViewData["Title"] = "Consuming web api";
 }
-
-@foreach (var item in Model.Items)
-{
-    <ul>
-        <li>@item.Name  </li>
-        <li>@item.Price</li>
-        <li>@(item.IsActive?"Product available":"Out of stock")</li>
-        <li>@item.Profit</li>
-        <li>@item.DiscountPrice</li>
-        <li>@item.ExpireDate</li>
-    </ul>
-}
+<div id="list"></div>
 <button id="clck">click</button>
 @section Scripts{
     <script>
     $("#clck").click(function(){
-        console.log("dasdasd");
-    });
     axios.get('http://localhost:3317/api/product')
   .then((response) => {
-    console.log(response.data);
+      let res = response.data;
+    console.log(response.data.items);
+        let div = $("#list");
+        let ul = document.createElement("ul");
+        res.items.forEach(item=>{
+        let li = document.createElement("li");
+        li.innerHTML = `Name: ${item.name}, price: ${item.price}, discount-price: ${item.discountPrice}`;
+        ul.append(li);
+        div.append(ul);
+        })
   });
+            let accesstoken = `eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1laWQiOiI5NzhiMWRlMS0yZGQ2LTRiZmMtYmM4Ny0yNDdlMmM5YTg2YTkiLCJGdWxsbmFtZSI6InJhbW1raGFsaWQiLCJ1bmlxdWVfbmFtZSI6InJhbW1raGFsaWQiLCJyb2xlIjoiQWRtaW4iLCJuYmYiOjE2NjEzMzE1OTEsImV4cCI6MTY2NjYwMTk5MSwiaWF0IjoxNjYxMzMxNTkxLCJpc3MiOiJodHRwOi8vbG9jYWxob3N0OjMzMTcvIiwiYXVkIjoiaHR0cDovL2xvY2FsaG9zdDozMzE3LyJ9.U_4QbYf0zA68y8an4RI9TtdVChUqcs7Q6FG_t8yXLlQ`
+            let api = `http://localhost:3317/api/Account/userprofile`;
+            axios.get(api, { headers: { "Authorization": `Bearer ${accesstoken}` } })
+                .then(res => {
+                    console.log(res.data)})
+                .catch ((error) => {
+                        console.log("fuck");
+                    });
+    });
     </script>
-});
 }
