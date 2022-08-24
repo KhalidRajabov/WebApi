@@ -1,0 +1,30 @@
+﻿@using System.Data
+@model ProductAll
+@{
+    ViewData["Title"] = "Consuming web api";
+}
+
+@foreach (var item in Model.Items)
+{
+    <ul>
+        <li>@item.Name  </li>
+        <li>@item.Price</li>
+        <li>@(item.IsActive?"Product available":"Out of stock")</li>
+        <li>@item.Profit</li>
+        <li>@item.DiscountPrice</li>
+        <li>@item.ExpireDate</li>
+    </ul>
+}
+<button id="clck">click</button>
+@section Scripts{
+    <script>
+    $("#clck").click(function(){
+        console.log("dasdasd");
+    });
+    axios.get('http://localhost:3317/api/product')
+  .then((response) => {
+    console.log(response.data);
+  });
+    </script>
+});
+}

@@ -35,6 +35,14 @@ namespace WebApi
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddCors(options =>
+            {
+                options.AddDefaultPolicy(policy =>
+                {
+                    policy.WithOrigins("https://localhost:5187", "http://localhost:5187")
+                    .AllowAnyHeader().AllowAnyMethod();
+                });
+            });
             services.AddControllers().AddFluentValidation(x => x.RegisterValidatorsFromAssemblyContaining<ProductCreateDto>());
             services.AddDbContext<AppDbContext>(opt =>
             {
@@ -98,6 +106,7 @@ namespace WebApi
                 c.SwaggerEndpoint("/swagger/v1/swagger.json", "Showing API V1");
             });
             app.UseStaticFiles();
+            app.UseCors();
             app.UseRouting();
 
 

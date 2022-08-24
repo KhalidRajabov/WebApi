@@ -9,6 +9,7 @@ using System.Web.Http.Results;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 using WebApi.Models;
+using Moq;
 
 namespace TestProject1
 {
@@ -20,18 +21,20 @@ namespace TestProject1
         [TestMethod]
         public void TestMethod1()
         {
-            ProductController newpro = new ProductController();
+            var ContextMock = new Mock<AppDbContext>();
+            var MapperMock = new Mock<IMapper>();
+            ProductController newpro = new ProductController(ContextMock.Object , MapperMock.Object);
 
             
 
             var test2 = newpro.GetOne(1);
-            Assert.IsNotNull(test2);
-            
-            /*var testProducts = GetTestProducts();
-            var controller = new SimpleProductController(testProducts);
+            Assert.IsNull(test2);
 
-            var result = controller.GetAllProducts() as List<Product>;
-            Assert.AreEqual(testProducts.Count, result.Count);*/
+            //var testProducts = GetTestProducts();
+            //var controller = new SimpleProductController(testProducts);
+
+            //var result = controller.GetAllProducts() as List<Product>;
+            //Assert.AreEqual(testProducts.Count, result.Count);
         }
         /*[TestMethod]
         public void GetProduct_ShouldReturnCorrectProduct()
@@ -54,6 +57,8 @@ namespace TestProject1
 
         private List<Product> GetTestProducts()
         {
+            
+
             var testProducts = new List<Product>();
             testProducts.Add(new Product { Id = 1, Name = "Demo1", 
                 Price = 1, DiscountPrice = 0,

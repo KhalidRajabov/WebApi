@@ -17,18 +17,15 @@ namespace WebApi.Controllers
     {
         private readonly AppDbContext _context;
         private readonly IMapper _mapper;
-        /*public ProductController()
-        {
-
-        }*/
+        
         public ProductController(AppDbContext context, IMapper mapper)
         {
             _context = context;
             _mapper = mapper;
         }
 
-        [HttpGet]
-        [Route("{Id}")]
+        [HttpGet("{id}")]
+        
         public IActionResult GetOne(int id)
         {
             Product product= _context.Products.Where(p=>p.IsActive).Include(c=>c.Category).FirstOrDefault(p => p.Id == id);
@@ -92,6 +89,20 @@ namespace WebApi.Controllers
             p.IsActive = productUpdateeDto.IsActive;
             await _context.SaveChangesAsync();
             return StatusCode(204, p.Name);
+        }
+
+        [HttpPatch("{id}")]
+        public IActionResult ChangeIsActive(int id, bool isActive)
+        {
+            Product p = _context.Products.FirstOrDefault(p => p.Id == id);
+            if (p == null)
+            {
+                //return StatusCode(StatusCodes.Status404NotFound);
+                return NotFound();
+            }
+            p.IsActive = isActive;
+            _context.SaveChanges();
+            return StatusCode(200, p.Id);
         }
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(int id)
